@@ -178,4 +178,6 @@ if __name__ == '__main__':
     p.add_argument("--num_timesteps",type=int, default=1000)
     p.add_argument("--mcmc_k", type=int, default=30)
     p.add_argument("--mcmc_b", type=float, default=0.1)
-    main()
+    
+    args = p.parse_args()
+    main(args)
