@@ -53,11 +53,11 @@ def run_conditional_mcmc(model, y_t_initial, x_t1_condition, t, K, b, sigma_t):
     Runs K steps of conditional Langevin MCMC to sample from p(y_t | x_{t+1}).
     [cite_start]This directly implements Equation 17. [cite: 177, 187, 195]
     """
-    y_k = y_t_initial.detach().clone()
+    y_k = y_t_initial.detach().clone().requires_grad_(True)
     step_size_sq = (b * sigma_t)**2
 
     for _ in range(K):
-        y_k.requires_grad = True
+        # y_k.requires_grad = True
 
         # Get the energy and the score (gradient) of the UNCONDITIONAL EBM f(y, t)
         energy = model(y_k, t)
@@ -72,7 +72,8 @@ def run_conditional_mcmc(model, y_t_initial, x_t1_condition, t, K, b, sigma_t):
 
         # [cite_start]Langevin dynamics update step [cite: 177]
         noise = torch.randn_like(y_k)
-        y_k = y_k.detach() + 0.5 * step_size_sq * full_score + torch.sqrt(step_size_sq) * noise
+        y_k = y_k + 0.5 * step_size_sq * full_score + torch.sqrt(step_size_sq) * noise
+        y_k = y_k.detach().clone().requires_grad_(True)
 
     return y_k.detach()
 
