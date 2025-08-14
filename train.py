@@ -89,6 +89,7 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
         model.train()
         progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}")
         
+        model_path = save_file + f"ebm_recovery_epoch_{epoch+1}.pth"
         torch.save(model.state_dict(), model_path)
         print(f"Model saved at epoch {epoch+1}")
         
