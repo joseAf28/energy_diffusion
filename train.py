@@ -78,7 +78,7 @@ def run_conditional_mcmc(model, y_t_initial, x_t1_condition, t, K, b, sigma_t):
 
 
 def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
-                            epochs=50, K=30, b=0.1, device='cpu'):
+                            epochs=50, K=30, b=0.1, device='cpu', save_file=""):
     """
     [cite_start]Implements the training procedure from Algorithm 1. [cite: 183]
     """
@@ -124,19 +124,16 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
             total_loss.backward()
             optimizer.step()
 
-            progress_bar.set_postfix(loss=f"{loss.item():.4f}")
+            progress_bar.set_postfix(loss=f"{total_loss.item():.4f}")
             
         
-        model_path = args.save_file + f"ebm_recovery_epoch_{epoch+1}.pth"
-
-        
-        model_name = f"ebm_recovery_epoch_{epoch+1}.pth"
+        model_path = save_file + f"ebm_recovery_epoch_{epoch+1}.pth"
         # Save a checkpoint
-        if (epoch + 1) % 10 == 0:
-            torch.save(model.state_dict(), model_name)
+        if (epoch + 1) % 5 == 0:
+            torch.save(model.state_dict(), model_path)
             print(f"Model saved at epoch {epoch+1}")
         elif best_loss < total_loss:
-            torch.save(model.state_dict(), model_name)
+            torch.save(model.state_dict(), model_path)
             print(f"Model saved at epoch {epoch+1}")
         
         best_loss = total_loss if total_loss < best_loss else best_loss
@@ -144,7 +141,8 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
 
 def main(args):
     # --- Hyperparameters ---
-    EPOCHS = args.epcochs
+    save_file = args.save_file
+    EPOCHS = args.epochs
     BATCH_SIZE = args.batch_size
     LEARNING_RATE = args.lr
     NUM_TIMESTEPS = args.num_timesteps  # T in the paper [cite: 200]
@@ -164,7 +162,7 @@ def main(args):
     print("--- Starting Training ---")
     train_recovery_likelihood(
         model, train_loader, optimizer, diffusion_helper,
-        epochs=EPOCHS, K=MCMC_K, b=MCMC_B, device=DEVICE
+        epochs=EPOCHS, K=MCMC_K, b=MCMC_B, device=DEVICE, save_file=save_file
     )
     print("--- Training Finished ---")
 
