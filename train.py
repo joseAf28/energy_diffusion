@@ -57,8 +57,6 @@ def run_conditional_mcmc(model, y_t_initial, x_t1_condition, t, K, b, sigma_t):
     step_size_sq = (b * sigma_t)**2
 
     for _ in range(K):
-        # y_k.requires_grad = True
-
         # Get the energy and the score (gradient) of the UNCONDITIONAL EBM f(y, t)
         energy = model(y_k, t)
         score_unconditional = autograd.grad(energy.sum(), y_k, retain_graph=False)[0]
@@ -68,7 +66,7 @@ def run_conditional_mcmc(model, y_t_initial, x_t1_condition, t, K, b, sigma_t):
         score_conditional_term = (1 / sigma_t**2) * (x_t1_condition - y_k)
         
         # The full gradient for the conditional distribution p(y_t | x_{t+1})
-        full_score = score_unconditional + score_conditional_term
+        full_score = -score_unconditional + score_conditional_term
 
         # [cite_start]Langevin dynamics update step [cite: 177]
         noise = torch.randn_like(y_k)
