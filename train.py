@@ -89,6 +89,9 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
         model.train()
         progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}")
         
+        torch.save(model.state_dict(), model_path)
+        print(f"Model saved at epoch {epoch+1}")
+        
         for (clean_images, _) in progress_bar:
             optimizer.zero_grad()
             clean_images = clean_images.to(device)
@@ -126,16 +129,20 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
             progress_bar.set_postfix(loss=f"{total_loss.item():.4f}")
             
         
-        model_path = save_file + f"ebm_recovery_epoch_{epoch+1}.pth"
-        # Save a checkpoint
-        if (epoch + 1) % 5 == 0:
-            torch.save(model.state_dict(), model_path)
-            print(f"Model saved at epoch {epoch+1}")
-        elif best_loss < total_loss:
-            torch.save(model.state_dict(), model_path)
-            print(f"Model saved at epoch {epoch+1}")
         
-        best_loss = total_loss if total_loss < best_loss else best_loss
+        # torch.save(model.state_dict(), model_path)
+        # print(f"Model saved at epoch {epoch+1}")
+        
+        # model_path = save_file + f"ebm_recovery_epoch_{epoch+1}.pth"
+        # # Save a checkpoint
+        # if (epoch + 1) % 5 == 0:
+        #     torch.save(model.state_dict(), model_path)
+        #     print(f"Model saved at epoch {epoch+1}")
+        # elif best_loss < total_loss:
+        #     torch.save(model.state_dict(), model_path)
+        #     print(f"Model saved at epoch {epoch+1}")
+        
+        # best_loss = total_loss if total_loss < best_loss else best_loss
         
 
 def main(args):
