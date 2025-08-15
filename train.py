@@ -21,9 +21,9 @@ class DiffusionHelper:
 
         # [cite_start]The paper uses a linear schedule for sigma^2 [cite: 202]
         # We define sigmas, which are the std dev of the added noise
-        self.sigmas_squared = torch.linspace(1e-4, 0.02, num_timesteps, device=device)
+        self.sigmas_squared = torch.linspace(1e-4, 0.4, num_timesteps, device=device)
         self.sigmas = torch.sqrt(self.sigmas_squared)
-
+        
         # [cite_start]The scaling factor for the forward process [cite: 170]
         self.sqrt_one_minus_sigma_squared = torch.sqrt(1. - self.sigmas_squared)
 
@@ -133,7 +133,7 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
 
 def main(args):
     # --- Hyperparameters ---
-    save_file = args.save_file
+    SAVE_FILE = args.save_file
     EPOCHS = args.epochs
     BATCH_SIZE = args.batch_size
     LEARNING_RATE = args.lr
@@ -154,7 +154,7 @@ def main(args):
     print("--- Starting Training ---")
     train_recovery_likelihood(
         model, train_loader, optimizer, diffusion_helper,
-        epochs=EPOCHS, K=MCMC_K, b=MCMC_B, device=DEVICE, save_file=save_file
+        epochs=EPOCHS, K=MCMC_K, b=MCMC_B, device=DEVICE, save_file=SAVE_FILE
     )
     print("--- Training Finished ---")
 
