@@ -117,7 +117,7 @@ def train_recovery_likelihood(model, train_loader, optimizer, diffusion_helper,
             loss = energy_positive.mean() - energy_negative.mean()
 
             # Optional: Add regularization to prevent energy values from exploding
-            reg_loss = 0.01 * ((energy_positive**2).mean() + (energy_negative**2).mean())
+            reg_loss = 0.05 * ((energy_positive**2).mean() + (energy_negative**2).mean())
             total_loss = loss + reg_loss
 
             total_loss.backward()
@@ -165,8 +165,8 @@ if __name__ == '__main__':
     p.add_argument("--batch_size",   type=int,   default=128)
     p.add_argument("--epochs",       type=int,   default=50)
     p.add_argument("--lr",           type=float, default=1e-4)
-    p.add_argument("--num_timesteps",type=int, default=1000)
-    p.add_argument("--mcmc_k", type=int, default=30)
+    p.add_argument("--num_timesteps",type=int, default=500)
+    p.add_argument("--mcmc_k", type=int, default=40)
     p.add_argument("--mcmc_b", type=float, default=0.1)
     
     args = p.parse_args()
